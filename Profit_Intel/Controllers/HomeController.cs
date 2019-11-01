@@ -15,7 +15,7 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult Analyze()
         {
             ViewData["Message"] = "Your application description page.";
 
@@ -29,7 +29,7 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Portfolio()
         {
             return View();
         }
