@@ -39,5 +39,16 @@ namespace Profit_Intel.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public IActionResult upload(String fileName)
+        {
+            //
+            // Here we would pass the fileName to mohammads code where it would be parsed !!
+            //
+            System.Diagnostics.Debug.WriteLine("What I found from the Post request: " + fileName);
+
+            return new EmptyResult();
+        }
     }
 }

@@ -3,9 +3,9 @@ for details on configuring this project to bundle and minify static web assets. 
 
 html{
     font-family: roboto, sans-serif;
+    font-size:12px;
 }
 body {
-    padding-top: 50px;
     padding-bottom: 20px;
 }
 
@@ -32,6 +32,14 @@ body {
     margin: 15px;
 }
 
+/* For Links on the navbar */
+.nav-link{
+    font-size:16px;
+}
+
+.custom-file{
+    margin-top:1em;
+}
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */

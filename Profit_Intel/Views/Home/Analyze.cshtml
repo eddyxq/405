@@ -2,13 +2,36 @@
     ViewData["Title"] = "Analyze";
 }
 <h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+
+@*<form id="form1" runat="server" enctype="multipart/form-data">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="myFile" name="myFile">
+            <label class="custom-file-label" for="customFile" style="font-size: 25px">Choose file</label>
+            <asp:button runat="server" ID="btnUpload" OnClick="btnUploadClick()" Text="Upload" />
+        </div>
+    </form>*@
 
 
-<br /><br />
-<label class="btn btn-default">
-  Browse <input type="file" class="file-field">
-</label>
-<br /><br />
+<div class="input-group">
+    <div class="custom-file">
+        <form enctype="multipart/form-data" method="POST" action="/upload" style="text-align:match-parent">
+            <input type="file" class="custom-file-input" id="inputGroupFile01" name="file"
+                   aria-describedby="inputGroupFileAddon01">
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label><br /> <br />
+            <input class="btn btn-light" type="submit" value="Upload" onclick="submit()" style="display:block; text-align:center;">
+        </form>
+    </div>
 
-          <p>Use this area to provide additional information.</p>
+</div>
+<br /><br /><br />
+
+<form enctype="multipart/form-data" method="POST" action="/upload">
+    <input id="myfilefield" type="file" name="file">
+    <input type="submit" value="Submit" onclick="submit()">
+</form>
+
+<br /><br /><br />
+
+<!-- The name in this file selection portion changes using the jquery code in site.js -->

@@ -3,4 +3,17 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<form>
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="switch1">
+        <label class="custom-control-label" for="switch1">Toggle me</label>
+    </div>
+    <select name="cars" class="custom-select">
+        <option selected>Custom Select Menu</option>
+        <option value="volvo">Volvo</option>
+        <option value="fiat">Fiat</option>
+        <option value="audi">Audi</option>
+    </select>
+    <label for="customRange">Custom range</label>
+    <input type="range" class="custom-range" id="customRange" name="points1">
+</form>
