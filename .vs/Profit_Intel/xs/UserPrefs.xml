@@ -1,0 +1,35 @@
+﻿<Properties StartupConfiguration="{F9908144-EDC6-4556-9359-C93E897E36A8}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Profit_Intel/Views/Home/ImportExport.cshtml">
+    <Files>
+      <File FileName="Profit_Intel/Controllers/HomeController.cs" Line="55" Column="1" />
+      <File FileName="Profit_Intel/Views/Home/Analyze.cshtml" />
+      <File FileName="Profit_Intel/Views/Home/ImportExport.cshtml" Line="21" Column="10" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Profit_Intel" expanded="True">
+            <Node name="Profit_Intel" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Data" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Home" expanded="True">
+                  <Node name="ImportExport.cshtml" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Profit__Intel PreferredExecutionTarget="/Applications/Safari.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
