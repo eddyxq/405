@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.HSSF.UserModel;
 using Profit_Intel.Models;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Text;
@@ -56,16 +55,6 @@ namespace Profit_Intel.Controllers
         }
 
         [HttpPost]
-<<<<<<< Updated upstream
-        public IActionResult upload(String fileName)
-        {
-            //
-            // Here we would pass the fileName to mohammads code where it would be parsed !!
-            //
-            System.Diagnostics.Debug.WriteLine("What I found from the Post request: " + fileName);
-
-            return new EmptyResult();
-=======
         [ActionName("ImportExport")]
         public IActionResult ImportExport(IFormFile files)
         {
@@ -136,6 +125,5 @@ namespace Profit_Intel.Controllers
         [HttpGet]
         public IActionResult ImportExport()
         { return View(); }
->>>>>>> Stashed changes
-        }
-    }
+        
+    } }
