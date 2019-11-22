@@ -15,3 +15,20 @@
     <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
     <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
 </address>
+
+<p id="something"></p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/contact",
+                success: function (response) {
+                    if (response.length > 0) { $('#something').html(response)}
+                }
+            });
+        });
+    </script>
+    }

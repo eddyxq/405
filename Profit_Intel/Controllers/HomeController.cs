@@ -13,6 +13,7 @@ using NPOI.XSSF.UserModel;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
+using System.Collections;
 
 namespace Profit_Intel.Controllers
 {
@@ -35,7 +36,7 @@ namespace Profit_Intel.Controllers
 
             return View();
         }
-
+        [HttpGet]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
@@ -43,6 +44,18 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
+
+        /*
+         *  This is where Eddys change was
+         */
+        [HttpPost]
+        [ActionName("Contact")]
+        public IActionResult Contact(Object input)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Hello World!");
+            return this.Content(sb.ToString());
+        }
         public IActionResult Portfolio()
         {
             return View();
@@ -54,11 +67,12 @@ namespace Profit_Intel.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+
         [HttpPost]
         [ActionName("ImportExport")]
         public IActionResult ImportExport(IFormFile files)
         {
-
+            ArrayList outArr = new ArrayList();
             IFormFile file = Request.Form.Files[0];
             if (file != null) {
                 string folderName = "Upload";
@@ -67,12 +81,10 @@ namespace Profit_Intel.Controllers
                 StringBuilder sb = new StringBuilder();
                 if (!Directory.Exists(newPath))
                 {
-                    Debug.WriteLine("Your girl");
                     Directory.CreateDirectory(newPath);
                 }
                 if (file.Length > 0)
                 {
-                    Debug.WriteLine("Your Mother");
                     string sFileExtension = Path.GetExtension(file.FileName).ToLower();
                     ISheet sheet;
                     string fullPath = Path.Combine(newPath, file.FileName);
@@ -98,6 +110,7 @@ namespace Profit_Intel.Controllers
                         {
                             NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
                             if (cell == null || string.IsNullOrWhiteSpace(cell.ToString())) continue;
+                            outArr.Add(cell.ToString());                    // Add to the array
                             sb.Append("<th>" + cell.ToString() + "</th>");
                         }
                         sb.Append("</tr>");
@@ -110,13 +123,17 @@ namespace Profit_Intel.Controllers
                             for (int j = row.FirstCellNum; j < cellCount; j++)
                             {
                                 if (row.GetCell(j) != null)
+                                {
+                                    outArr.Add(row.GetCell(j).ToString());
                                     sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
+                                }
                             }
                             sb.AppendLine("</tr>");
                         }
                         sb.Append("</table>");
                     }
                 }
+                Debug.WriteLine(outArr.ToArray());
                 return this.Content(sb.ToString());
             } 
             return new EmptyResult();
@@ -125,5 +142,5 @@ namespace Profit_Intel.Controllers
         [HttpGet]
         public IActionResult ImportExport()
         { return View(); }
-        
+    
     } }
