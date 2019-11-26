@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
 using System.Collections;
+using DataAnalysis;
 
 namespace Profit_Intel.Controllers
 {
@@ -134,8 +135,10 @@ namespace Profit_Intel.Controllers
                     }
                 }
                 Debug.WriteLine(outArr.ToArray());
+                DataSaveWrite.WriteDataToFile(outArr, "StockInfo");     // Write it to a file
                 return this.Content(sb.ToString());
             } 
+
             return new EmptyResult();
         }
 
