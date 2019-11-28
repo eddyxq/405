@@ -3,6 +3,23 @@
 }
 <h2>@ViewData["Title"]</h2>
 
+<p id="data"></p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/portfolio",
+                success: function (response) {
+                    if (response.length > 0) { $('#data').html(response)}
+                }
+            });
+        });
+    </script>
+    }
+
 <form>
     <div class="custom-control custom-switch">
         <input type="checkbox" class="custom-control-input" id="switch1">

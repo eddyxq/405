@@ -62,6 +62,164 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ActionName("Portfolio")]
+        public IActionResult Portfolio(Object input)
+        {
+            double portfolioVal = 0.0;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<table class='table'><tr>");
+
+            //Directory containing saved stock file
+            string currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockList.txt";
+            //Creating an array in which we store the read conent of text file containing stock symbols
+            string[] symbols;
+            var list = new List<string>();
+            var fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            symbols = list.ToArray();
+
+            //Directory containing saved stock info
+            currentDirectory = Directory.GetCurrentDirectory() + "/Data/StockInfo.txt";
+            //Creating an array in which we store the read conent of text file containing all stock info
+            string[] stockInfo;
+            list = new List<string>();
+            fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            stockInfo = list.ToArray();
+
+            //Directory containing saved stock prices
+            currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockPrices.txt";
+            //Creating an array in which we store the read conent of text file containing all stock info
+            string[] stockPrices;
+            list = new List<string>();
+            fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            stockPrices = list.ToArray();
+
+            //Table header: Symbol and then a header for each category of info
+            {
+                sb.Append("<tr>");
+                sb.Append("<th>" + "Symbol" + "</th>");
+                sb.Append("<th>" + "Quantity" + "</th>");
+                sb.Append("<th>" + "Market Price" + "</th>");
+                sb.Append("<th>" + "Holding Value" + "</th>");
+                sb.Append("</tr>");
+            }
+
+            //Traverse through each stock and calculate its info 
+            for (int i = 0; i < symbols.Count(); i++)
+            {
+                double quantity = 0.0;
+                double holdingVal = 0.0;
+
+                sb.Append("<tr>");
+
+                //Every entry in the array thats has remainder 1 when mod 5 is a symbol
+                //  if(i%5 == 1 && !stockNames.Contains(lines[i]))
+
+                //listing the stock symbol itself in the row
+                sb.Append("<th>" + symbols[i] + "</th>");
+
+                //Calculating quantity of this stock by iterating through stockInfo
+                for (int k = 0; k < stockInfo.Count(); k++)
+                {
+                    //Checking if an entry matches this stock symbol
+                    if (stockInfo[k].Equals(symbols[i]))
+                    {
+                        //If an entry is a BUY
+                        if (stockInfo[k + 1].Equals("BUY"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                quantity += amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+
+                        //If an entry is a SELL
+                        if (stockInfo[k + 1].Equals("SELL"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                quantity -= amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+                    }
+                }
+
+                quantity = Math.Round(quantity, 2);
+                sb.Append("<td>" + quantity + "</td>");
+                sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
+
+                try
+                {
+                    double price = System.Convert.ToDouble(stockPrices[(i * 2) + 1]);
+                    holdingVal = quantity * price;
+                    holdingVal = Math.Round(holdingVal, 2);
+                    portfolioVal += holdingVal;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Input string is not a sequence of digits.");
+                }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("The number cannot fit in a double.");
+                }
+
+                sb.Append("<td>" + holdingVal + "</td>");
+
+                sb.Append("</tr>");
+            }
+
+
+            sb.Append("</table>");
+
+            portfolioVal = Math.Round(portfolioVal, 2);
+            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+            return this.Content(sb.ToString());
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

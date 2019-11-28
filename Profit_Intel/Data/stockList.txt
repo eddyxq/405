@@ -1,0 +1,4 @@
+SNC
+MSFT
+AAPL
+FB
