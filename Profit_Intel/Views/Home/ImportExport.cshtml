@@ -1,18 +1,27 @@
-﻿<h2>Upload Trade History (xls/xlsx)</h2>
-<form>
-    <br/>
-    <div class="row">
-        <div class="col-md-4">
-            <input type="file" id="fUpload" name="files" class="form-control" />
+﻿<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+<div id="mainContent">
+    <h2><b>Upload Trade History (XLS/XLSX)</b></h2>
+    <form>
+        <br />
+        <div class="row">
+            <div class="col-md-4">
+                <input type="file" id="fUpload" name="files" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <input type="button" id="btnUpload" value="Upload" />
+            </div>
+            <div class="col-md-4">
+                <button id="successful_inputBTN" class="btn btn-default" style="padding: 15px 100px ;opacity:0;background-color:rgb(115, 196, 252)"
+                        onclick="cleanDisplay()"> 
+                <b>Begin Analysis</b> </button>
+            </div>
         </div>
-        <div class="col-md-8">
-            <input type="button" id="btnUpload" value="Upload" />
-        </div>
-    </div>
- 
-    <br/>
-    <div id="dvData"></div>
-</form>
+
+        <br />
+        <div id="dvData"></div>
+    </form>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script type="text/javascript" language="JavaScript">
@@ -47,18 +56,23 @@
                             alert('Some error occured while uploading');
                         else {
                             $('#dvData').html(response);
+                            document.getElementById("successful_inputBTN").style.opacity = 1;
                         }
                     },
                     error: function (e) {
                         $('#dvData').html(e.responseText);
                     }
-                 });
+                });
                 console.log(files);
                 console.log(fdata.get("sampledata.xlsx"));
                 console.log(JSON.stringify(fdata));
+            });
 
-          
-            })
         });
+        document.getElementById("Analyze").style.color = "#73C4FC";
+
+        function cleanDisplay() {
+            $('#mainContent').html("");
+        };
     </script>
 }

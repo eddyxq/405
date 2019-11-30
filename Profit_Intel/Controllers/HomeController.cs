@@ -44,20 +44,12 @@ namespace Profit_Intel.Controllers
 
             return View();
         }
-
-
-        /*
-         *  This is where Eddys change was
-         */
-        [HttpPost]
-        [ActionName("Contact")]
-        public IActionResult Contact(Object input)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Hello World!");
-            return this.Content(sb.ToString());
-        }
         public IActionResult Portfolio()
+        {
+            return View();
+        }
+
+        public IActionResult Taxes()
         {
             return View();
         }
@@ -357,5 +349,17 @@ namespace Profit_Intel.Controllers
         [HttpGet]
         public IActionResult ImportExport()
         { return View(); }
-    
+
+        /*
+         *  This is where Eddys change was
+         */
+        [HttpPost]
+        [ActionName("Contact")]
+        public IActionResult Contact(Object input)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Hello World!");
+            return this.Content(sb.ToString());
+        }
+
     } }

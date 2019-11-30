@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "Taxes";
+}
+        <div id="Content" class="pageCenter" style="opacity:0">
+            <h1>
+
+                Taxable Dividends: $0.00 </br></br>
+                Foreign interest and dividends: $0.00 </br></br>
+                Interest and other investment income: $0.00</br></br>
+                Capital Gains: $0.00 </br></br>
+                Total: $0.00 </br></br>
+            </h1>
+        </div>
+
+<div class="text-center">
+    <button id="Estimate" class="btn btn-success btn-lg" style=" position: absolute; top: 50%;">Estimate Tax Impact</button>
+</div>
+
+<style>
+    .pageCenter {
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 100%;
+    }
+</style>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.getElementById("Taxes").style.color = "#73C4FC";
+        $(document).ready(function () {
+            $('#Estimate').on('click', function () {
+                document.getElementById("Estimate").style.opacity = 0;      // Set the button to invisible
+                document.getElementById("Content").style.opacity = 1;       // Set the content to visible
+            });
+        });
+    </script>
+}
