@@ -88,7 +88,7 @@ namespace Profit_Intel.Controllers
             symbols = list.ToArray();
 
             //Directory containing saved stock info
-            currentDirectory = Directory.GetCurrentDirectory() + "/Data/StockInfo.txt";
+            currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockInfo.txt";
             //Creating an array in which we store the read conent of text file containing all stock info
             string[] stockInfo;
             list = new List<string>();
@@ -123,9 +123,12 @@ namespace Profit_Intel.Controllers
             {
                 sb.Append("<tr>");
                 sb.Append("<th>" + "Symbol" + "</th>");
-                sb.Append("<th>" + "Quantity" + "</th>");
                 sb.Append("<th>" + "Market Price" + "</th>");
-                sb.Append("<th>" + "Holding Value" + "</th>");
+                sb.Append("<th>" + "Number of Shares" + "</th>");
+                sb.Append("<th>" + "Avg. Cost" + "</th>");
+                sb.Append("<th>" + "Total Cost" + "</th>");
+                sb.Append("<th>" + "Market Value" + "</th>");
+                sb.Append("<th>" + "Loss/Gain" + "</th>");
                 sb.Append("</tr>");
             }
 
@@ -133,7 +136,10 @@ namespace Profit_Intel.Controllers
             for (int i = 0; i < symbols.Count(); i++)
             {
                 double quantity = 0.0;
-                double holdingVal = 0.0;
+                double marketVal = 0.0;
+                double totalCost = 0.0;
+                double gainloss = 0.0;
+                double avgCost;
 
                 sb.Append("<tr>");
 
@@ -155,6 +161,9 @@ namespace Profit_Intel.Controllers
                             try
                             {
                                 double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost += cost;
                                 quantity += amount;
                             }
                             catch (FormatException)
@@ -173,6 +182,9 @@ namespace Profit_Intel.Controllers
                             try
                             {
                                 double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost -= cost;
                                 quantity -= amount;
                             }
                             catch (FormatException)
@@ -187,16 +199,12 @@ namespace Profit_Intel.Controllers
                     }
                 }
 
-                quantity = Math.Round(quantity, 2);
-                sb.Append("<td>" + quantity + "</td>");
-                sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
-
+                //Getting market price and adjusting portfolio and holding value accordingly
                 try
                 {
                     double price = System.Convert.ToDouble(stockPrices[(i * 2) + 1]);
-                    holdingVal = quantity * price;
-                    holdingVal = Math.Round(holdingVal, 2);
-                    portfolioVal += holdingVal;
+                    marketVal = quantity * price;
+                    portfolioVal += marketVal;
                 }
                 catch (FormatException)
                 {
@@ -207,8 +215,44 @@ namespace Profit_Intel.Controllers
                     Console.WriteLine("The number cannot fit in a double.");
                 }
 
-                sb.Append("<td>" + holdingVal + "</td>");
+                //Average cost basis calculation
+                avgCost = totalCost / quantity;
 
+                //Calculate gain or loss based on market value and total cost
+                gainloss = marketVal - totalCost;
+                //Round values to 2 decimal places
+                marketVal = Math.Round(marketVal, 2);
+                quantity = Math.Round(quantity, 2);
+                avgCost = Math.Round(avgCost, 2);
+                totalCost = Math.Round(totalCost, 2);
+                gainloss = Math.Round(gainloss, 2);
+
+                //Market price of stock
+                sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
+                //Number of shares
+                sb.Append("<td>" + quantity + "</td>");
+                //Average cost
+                sb.Append("<td>" + avgCost + "</td>");
+                //Total cost of this stock
+                sb.Append("<td>" + totalCost + "</td>");
+                //Total market value of this stock, color based on comparison to total cost
+                if (marketVal >= totalCost)
+                {
+                    sb.Append("<td> <font color=\"green\">" + marketVal + "</font> </td>");
+                }
+                else
+                {
+                    sb.Append("<td> <font color=\"red\">" + marketVal + "</font> </td>");
+                }
+                //Gain or loss on this stock color based on the amount
+                if (gainloss >= 0.0)
+                {
+                    sb.Append("<td> <font color=\"green\">+" + gainloss + "</font> </td>");
+                }
+                else
+                {
+                    sb.Append("<td> <font color=\"red\">" + gainloss + "</font> </td>");
+                }
                 sb.Append("</tr>");
             }
 
@@ -226,14 +270,17 @@ namespace Profit_Intel.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-
+        //Excel file upload code adapted from https://github.com/talkingdotnet/ImportExportExcelASPNetCore
         [HttpPost]
         [ActionName("ImportExport")]
         public IActionResult ImportExport(IFormFile files)
         {
             ArrayList outArr = new ArrayList();
+            ArrayList stockSymbol = new ArrayList();
+
             IFormFile file = Request.Form.Files[0];
-            if (file != null) {
+            if (file != null)
+            {
                 string folderName = "Upload";
                 string webRootPath = _hostingEnvironment.WebRootPath;
                 string newPath = Path.Combine(webRootPath, folderName);
@@ -285,6 +332,12 @@ namespace Profit_Intel.Controllers
                                 {
                                     outArr.Add(row.GetCell(j).ToString());
                                     sb.Append("<td>" + row.GetCell(j).ToString() + "</td>");
+
+                                    //Check if it's a unique stock Symbol (if so add to stockSymbol arrayList)
+                                    if (j == 1 && !stockSymbol.Contains(row.GetCell(j).ToString()))
+                                    {
+                                        stockSymbol.Add(row.GetCell(j).ToString());
+                                    }
                                 }
                             }
                             sb.AppendLine("</tr>");
@@ -293,9 +346,10 @@ namespace Profit_Intel.Controllers
                     }
                 }
                 Debug.WriteLine(outArr.ToArray());
-                DataSaveWrite.WriteDataToFile(outArr, "StockInfo");     // Write it to a file
+                DataSaveWrite.WriteDataToFile(outArr, "stockInfo");     // Write it to a file
+                DataSaveWrite.WriteDataToFile(stockSymbol, "stockList");
                 return this.Content(sb.ToString());
-            } 
+            }
 
             return new EmptyResult();
         }

@@ -13,6 +13,22 @@
         </div>
     </form>*@
 
+<p id="data"></p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/portfolio",
+                success: function (response) {
+                    if (response.length > 0) { $('#data').html(response)}
+                }
+            });
+        });
+    </script>
+    }
 
 <div class="input-group">
     <div class="custom-file">

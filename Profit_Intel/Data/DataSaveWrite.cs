@@ -11,7 +11,7 @@ namespace DataAnalysis
          */
         public static void WriteDataToFile(ArrayList dataArr, string fileName)
         {
-            string currentDirectory = Directory.GetCurrentDirectory() + "/Data/something.txt";  // Save it in the data Folder where this code is
+            string currentDirectory = Directory.GetCurrentDirectory() + "/Data/" + fileName + ".txt";  // Save it in the data Folder where this code is
             File.WriteAllLines(currentDirectory, dataArr.Cast<string>().ToArray());
         }
     }
