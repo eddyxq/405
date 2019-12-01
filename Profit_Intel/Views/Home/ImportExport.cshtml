@@ -152,33 +152,45 @@
             var htmlContent = htmlContent + "<tr>";      // Indicate a table row
 
             // ROE
-            htmlContent = htmlContent + "<th scope=\"row\">" + "ROE" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip\" title=\" Return on equity measures how effectively management is using a company’s assets to create profits. \">"
+                + "ROE" + '</th>'          // Add the ratio
             htmlContent = htmlContent + "<td>" + 0.0724 + "</td>"                     // hardcode the value
             htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
 
             
             // P/E
-            htmlContent = htmlContent + "<th scope=\"row\">" + "P/E" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip2\" title=\"Price-to-earnings ratios compares and measures its current share price relative to its earnings per-share.\" >"
+                + "P/E" + '</th>'          // Add the ratio
             htmlContent = htmlContent + '<td>' + 24.37 + '</td>'                       // hardcode the value
             htmlContent = htmlContent + '<td>' + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
 
 
             // EPS
-            htmlContent = htmlContent + "<th scope=\"row\">" + "EPS" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip3\" title=\"Earnings-per-share is a measure of a company’s profitability. The higher a company’s EPS, the more profitable it is considered.\" >"
+                + "EPS" + '</th>'          // Add the ratio
             htmlContent = htmlContent + "<td>" + 0.59 + "</td>"                        // hardcode the value
             htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
 
             // D/E
-            htmlContent = htmlContent + "<th scope=\"row\">" + "D/E" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip4\" title=\"Debt-to-Equity ratio is used to evaluate a company’s financial leverage. A higher number indicates a high reliance on debt.\" >"
+                + "D/E" + '</th>'          // Add the ratio
             htmlContent = htmlContent + "<td>" + 27.44 + "</td>"                       // hardcode the value
             htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
 
             // Current Ratio
-            htmlContent = htmlContent + "<th scope=\"row\">" + "ROE" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip5\" title=\"Current ratio measures a company’s ability to pay short-term obligations, a higher number indicates more liquidity.\" >"
+                + "ROE" + '</th>'          // Add the ratio
             htmlContent = htmlContent + "<td>" + 0.83 + "</td>"                        // hardcode the value  
             htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
             
             $('#tableContent').html(htmlContent);   // Update the table accordingly
+
+            // Initialize the tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip2"]').tooltip();
+            $('[data-toggle="tooltip3"]').tooltip();
+            $('[data-toggle="tooltip4"]').tooltip();
+            $('[data-toggle="tooltip5"]').tooltip();
 
         }
     </script>
