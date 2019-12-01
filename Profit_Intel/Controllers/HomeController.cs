@@ -303,7 +303,7 @@ namespace Profit_Intel.Controllers
 
                         IRow headerRow = sheet.GetRow(0); //Get Header Row
                         int cellCount = headerRow.LastCellNum;
-                        sb.Append("<table class='table'><tr>");
+                        sb.Append("<table class='table table-hover'><tr>");
                         for (int j = 0; j < cellCount; j++)
                         {
                             NPOI.SS.UserModel.ICell cell = headerRow.GetCell(j);
@@ -335,7 +335,9 @@ namespace Profit_Intel.Controllers
                             sb.AppendLine("</tr>");
                         }
                         sb.Append("</table>");
+                        stream.Close();             // Close the reading stream
                     }
+
                 }
                 Debug.WriteLine(outArr.ToArray());
                 DataSaveWrite.WriteDataToFile(outArr, "stockInfo");     // Write it to a file
@@ -362,4 +364,20 @@ namespace Profit_Intel.Controllers
             return this.Content(sb.ToString());
         }
 
+
+        // In the future this would be made so that users can give us the name of the specific file in which 
+        // they would have their stockList input, like some form of ID, now it just grabs the generic one
+        [HttpGet]
+        public IActionResult stockList()
+        {
+            StringBuilder sb = new StringBuilder();
+            StreamReader reader = System.IO.File.OpenText("Data\\stockList.txt");
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                sb.Append(line+"\n");
+            }
+            reader.Close();
+            return this.Content(sb.ToString());
+        }
     } }

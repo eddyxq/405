@@ -1,4 +1,35 @@
 ﻿<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+<!-- To completely remove the spacing caused by this div, use the style: display: none and it will be hidden
+    then just manipulate that in the javascript to display it when you want-->
+<div id="dataAnalysis" style=" visibility: hidden;">
+    <div class="dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Select Stock to Display
+        </button>
+        <div id="dropdownInfo" class="dropdown-menu">
+            <a class="dropdown-item" href="#">Link 1</a>
+            <a class="dropdown-item" href="#">Link 2</a>
+            <a class="dropdown-item" href="#">Link 3</a>
+        </div>
+
+    </div>
+    <h1 id="stockName" style="padding-top: 6%"></h1>
+    <table class="table table-hover" style="margin-top:1em;">
+        <thead>
+            <tr>
+                <th scope="col">Ratio</th>
+                <th scope="col">Value</th>
+                <th scope="col">Status</th>
+
+            </tr>
+        </thead>
+        <tbody id="tableContent">
+        </tbody>
+    </table>
+</div>
+
+<!-- This is the main content which contains the upload button-->
 <div id="mainContent">
     <h2><b>Upload Trade History (XLS/XLSX)</b></h2>
     <form>
@@ -7,13 +38,14 @@
             <div class="col-md-4">
                 <input type="file" id="fUpload" name="files" class="form-control" />
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="button" id="btnUpload" value="Upload" />
             </div>
-            <div class="col-md-4">
-                <button id="successful_inputBTN" class="btn btn-default" style="padding: 15px 100px ;opacity:0;background-color:rgb(115, 196, 252)"
-                        onclick="cleanDisplay()"> 
-                <b>Begin Analysis</b> </button>
+            <div class="col-md-5">
+                <button type="button" id="successful_inputBTN" class="btn btn-default"
+                        style="padding: 15px 100px ;opacity:0;background-color:rgb(115, 196, 252)" onclick="updateView()">
+                    <b>Submit Data & Analyze</b>
+                </button>
             </div>
         </div>
 
@@ -25,7 +57,11 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script type="text/javascript" language="JavaScript">
+
+        // Whenever the document is loaded, fire this function
         $(document).ready(function () {
+
+            // When the upload button is clicked, check what was input, if its good, parse it and send it through a post request.
             $('#btnUpload').on('click', function () {
                 var fileExtension = ['xls', 'xlsx'];
                 var filename = $('#fUpload').val();
@@ -63,16 +99,87 @@
                         $('#dvData').html(e.responseText);
                     }
                 });
+
+                // Log some info for bug fixing
                 console.log(files);
                 console.log(fdata.get("sampledata.xlsx"));
                 console.log(JSON.stringify(fdata));
             });
 
-        });
-        document.getElementById("Analyze").style.color = "#73C4FC";
+            document.getElementById("Analyze").style.color = "#73C4FC";  // Change the navbar color
 
-        function cleanDisplay() {
-            $('#mainContent').html("");
-        };
+            $('.dropdown-toggle').dropdown();                           // Enable the dropdown
+
+
+        });
+
+
+        /**
+         *  When the user clicks the analyze button, this method fires
+         * 
+         */
+        function updateView() {
+            $('#mainContent').html("");                        // Hide the mainContent
+            $('#dataAnalysis').css("visibility", "visible")    // Set the table as visible
+            $.ajax({
+                type: "GET",
+                url: "/home/stockList",
+                success: function (response) {
+                    if (response.length == 0)
+                        alert('Some error occured while uploading');
+                    else {
+                        var stockArray = response.split(/\r?\n/);       //Split it by regex or newline, this is for linux or Windows
+                        var htmlOutput = "";
+                        for (stock in stockArray) {
+                            htmlOutput = htmlOutput + " <a class=\"dropdown-item\" onclick=\"stockSelected('" + stockArray[stock] + "')\">" + stockArray[stock] + "<\a>"        //Create the dropdown
+                        }
+                        $('#dropdownInfo').html(htmlOutput);
+                    }
+                }
+            });
+        }
+
+        /**
+         * When a stock has been selected from the dropdown menu
+         * param - stockName name of stock selected
+         */
+        function stockSelected(stockName) {
+            // TODO: add tooltips for each, but keep it local to the ratio words only
+
+
+            $("#stockName").html(stockName);
+            // ROE, P/E EPS D/E Current Ratio
+            var htmlContent = htmlContent + "<tr>";      // Indicate a table row
+
+            // ROE
+            htmlContent = htmlContent + "<th scope=\"row\">" + "ROE" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<td>" + 0.0724 + "</td>"                     // hardcode the value
+            htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+
+            
+            // P/E
+            htmlContent = htmlContent + "<th scope=\"row\">" + "P/E" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + '<td>' + 24.37 + '</td>'                       // hardcode the value
+            htmlContent = htmlContent + '<td>' + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+
+
+            // EPS
+            htmlContent = htmlContent + "<th scope=\"row\">" + "EPS" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<td>" + 0.59 + "</td>"                        // hardcode the value
+            htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+
+            // D/E
+            htmlContent = htmlContent + "<th scope=\"row\">" + "D/E" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<td>" + 27.44 + "</td>"                       // hardcode the value
+            htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
+
+            // Current Ratio
+            htmlContent = htmlContent + "<th scope=\"row\">" + "ROE" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<td>" + 0.83 + "</td>"                        // hardcode the value  
+            htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
+            
+            $('#tableContent').html(htmlContent);   // Update the table accordingly
+
+        }
     </script>
 }
