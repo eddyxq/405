@@ -59,6 +59,8 @@ namespace Profit_Intel.Controllers
         public IActionResult Portfolio(Object input)
         {
             double portfolioVal = 0.0;
+            double capitalGains = 0.0;
+            ArrayList stockGains = new ArrayList();
 
             StringBuilder sb = new StringBuilder();
             sb.Append("<table class='table'><tr>");
@@ -120,8 +122,137 @@ namespace Profit_Intel.Controllers
                 sb.Append("<th>" + "Avg. Cost" + "</th>");
                 sb.Append("<th>" + "Total Cost" + "</th>");
                 sb.Append("<th>" + "Market Value" + "</th>");
-                sb.Append("<th>" + "Loss/Gain" + "</th>");
                 sb.Append("</tr>");
+            }
+
+            //Traverse through each stock and calculate its info 
+            for (int i = 0; i < symbols.Count(); i++)
+            {
+                double quantity = 0.0;
+                double marketVal = 0.0;
+                double totalCost = 0.0;
+                double gainloss = 0.0;
+                double avgCost;
+        
+                sb.Append("<tr>");
+
+                //Calculating quantity of this stock by iterating through stockInfo
+                for (int k = 0; k < stockInfo.Count(); k++)
+                {
+                    //Checking if an entry matches this stock symbol
+                    if (stockInfo[k].Equals(symbols[i]))
+                    {
+                        //If an entry is a BUY
+                        if (stockInfo[k + 1].Equals("BUY"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost += cost;
+                                quantity += amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+
+                        //If an entry is a SELL
+                        if (stockInfo[k + 1].Equals("SELL"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost -= cost;
+                                quantity -= amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+                    }
+                }
+
+                //Checking if user owns any of this stock (Eliminate it from portolio if Quantity = 0)
+                if (quantity > 0)
+                {
+                    //listing the stock symbol itself in the row
+                    sb.Append("<th>" + symbols[i] + "</th>");
+                    //Getting market price and adjusting portfolio and holding value accordingly
+                    try
+                    {
+                        double price = System.Convert.ToDouble(stockPrices[(i * 2) + 1]);
+                        marketVal = quantity * price;
+                        portfolioVal += marketVal;
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Input string is not a sequence of digits.");
+                    }
+                    catch (OverflowException)
+                    {
+                        Console.WriteLine("The number cannot fit in a double.");
+                    }
+
+                    //Average cost basis calculation
+                    avgCost = totalCost / quantity;
+
+                    //Calculate gain or loss based on market value and total cost
+                    gainloss = marketVal - totalCost;
+                    //Round values to 2 decimal places
+                    marketVal = Math.Round(marketVal, 2);
+                    quantity = Math.Round(quantity, 2);
+                    avgCost = Math.Round(avgCost, 2);
+                    totalCost = Math.Round(totalCost, 2);
+
+                    //Market price of stock
+                    sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
+                    //Number of shares
+                    sb.Append("<td>" + quantity + "</td>");
+                    //Average cost
+                    sb.Append("<td>" + avgCost + "</td>");
+                    //Total cost of this stock
+                    sb.Append("<td>" + totalCost + "</td>");
+                    //Total market value of this stock
+                    sb.Append("<td>" + marketVal + "</td>");
+                   
+                    sb.Append("</tr>");
+                }
+
+                //If the quantity of a share is 0
+                else
+                {
+                    sb.Append("<tr>");
+                    sb.Append("</tr>");
+                }
+            }
+
+
+            sb.Append("</table>");
+
+            portfolioVal = Math.Round(portfolioVal, 2);
+            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+
+            //Profit/loss table
+            sb.Append("<table class='table'><tr>");
+            //Table header: Symbol and then a header for each category of info
+            {
+                sb.Append("<tr>");
+                sb.Append("<th>" + "Symbol" + "</th>");
+                sb.Append("<th>" + "Loss/Gain" + "</th>");
             }
 
             //Traverse through each stock and calculate its info 
@@ -134,9 +265,6 @@ namespace Profit_Intel.Controllers
                 double avgCost;
 
                 sb.Append("<tr>");
-
-                //Every entry in the array thats has remainder 1 when mod 5 is a symbol
-                //  if(i%5 == 1 && !stockNames.Contains(lines[i]))
 
                 //listing the stock symbol itself in the row
                 sb.Append("<th>" + symbols[i] + "</th>");
@@ -219,23 +347,10 @@ namespace Profit_Intel.Controllers
                 totalCost = Math.Round(totalCost, 2);
                 gainloss = Math.Round(gainloss, 2);
 
-                //Market price of stock
-                sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
+                //Adding gains for tax data
+                capitalGains += gainloss;
+
                 //Number of shares
-                sb.Append("<td>" + quantity + "</td>");
-                //Average cost
-                sb.Append("<td>" + avgCost + "</td>");
-                //Total cost of this stock
-                sb.Append("<td>" + totalCost + "</td>");
-                //Total market value of this stock, color based on comparison to total cost
-                if (marketVal >= totalCost)
-                {
-                    sb.Append("<td> <font color=\"green\">" + marketVal + "</font> </td>");
-                }
-                else
-                {
-                    sb.Append("<td> <font color=\"red\">" + marketVal + "</font> </td>");
-                }
                 //Gain or loss on this stock color based on the amount
                 if (gainloss >= 0.0)
                 {
@@ -248,13 +363,14 @@ namespace Profit_Intel.Controllers
                 sb.Append("</tr>");
             }
 
-
             sb.Append("</table>");
 
-            portfolioVal = Math.Round(portfolioVal, 2);
-            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+            //Saving capitl gains for tax calculation
+            stockGains.Add(capitalGains.ToString());
+            DataSaveWrite.WriteDataToFile(stockGains, "stockGainInfo");
             return this.Content(sb.ToString());
-        }
+    }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
