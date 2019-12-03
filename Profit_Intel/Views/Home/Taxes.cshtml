@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewData["Title"] = "Taxes";
+}
+
+    <div class="pageCenter">
+        <button id="Estimate" class=" btn btn-success btn-lg">
+            Estimate Tax Impact
+        </button>
+    </div>
+
+    <div id="Content" class="pageCenter" style="visibility:hidden" >
+            <h1 style="padding-bottom: 3em">Tax Estimate Summary</h1>
+            <table class="container table table-hover">
+                <tbody>
+                    <tr>
+                        <td data-toggle="tooltip" title="Line 120 – Taxable amount of dividends (eligible and other than eligible) from taxable Canadian corporations. This is the taxable amount of dividends received from a taxable Canadian corporation. ">
+                            <h3 >
+                                <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-120-taxable-amount-dividends-eligible-other-than-eligible-taxable-canadian-corporations.html">
+                                    Taxable Dividends: </a><span style="color:black">$0.00 </span>
+                                </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-toggle="tooltip2" title="Line 121 – Foreign interest and dividends. 
+                            This is the amount of foreign interest and dividend income received.">
+                            <h3 > 
+                                    <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income/line-121-foreign-interest-dividends.html">
+                                    Foreign interest and dividends: </a> <span style="color:black">$0.00 </span> 
+                                </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-toggle="tooltip3" title="Line 121 – Interest and other investment income. 
+                            This is the interest and other investment income received.">
+                                <h3>
+                                    <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income.html">
+                                    Interest and other investment income:
+                                    </a><span style="color:black">$0.00 </span>
+                                </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-toggle="tooltip4" title="
+                            Line 127 – Capital gains. The is the capital gain or loss from selling or transferring capital property.">
+                                <h3>
+                                    <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-127-capital-gains.html">
+                                    Capital Gains:
+                                        </a>
+                                    <span style="color:black">$0.00 </span>
+                                </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>
+                                Total: $0.00
+                            </h3>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="btn btn-lg btn-dark">Generate Interim Report</button>
+        </div>
+
+
+<style>
+    .pageCenter {
+    left: 0;
+    line-height: 200px;
+    margin-top: -100px;
+    position: absolute;
+    text-align: center;
+    top: 40%;
+    width: 100%;
+    }
+</style>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.getElementById("Taxes").style.color = "#73C4FC";
+        $(document).ready(function () {
+            $('#Estimate').on('click', function () {
+                document.getElementById("Estimate").style.visibility = "hidden";      // Set the button to invisible
+                document.getElementById("Content").style.visibility = "visible";       // Set the content to visible
+            });
+
+            // Initialize the tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip2"]').tooltip();
+            $('[data-toggle="tooltip3"]').tooltip();
+            $('[data-toggle="tooltip4"]').tooltip();
+
+
+        });
+    </script>
+}
