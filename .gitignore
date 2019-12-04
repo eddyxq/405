@@ -76,3 +76,5 @@ _[Ss]cripts
 .vs/Profit_Intel/xs/sqlite3/storage.ide-shm
 .vs/Profit_Intel/xs/sqlite3/storage.ide-shm
 .vs/Profit_Intel/xs/sqlite3/storage.ide-wal
+.vs/Profit_Intel/v16/Server/sqlite3/storage.ide-wal
+.vs/Profit_Intel/*
