@@ -5,19 +5,67 @@
 
 <p id="data"></p>
 
+<div class="pageCenter">
+    <button id="Estimate" class=" btn btn-success btn-lg">
+        Estimate Capital Gains Impact
+    </button>
+</div>
+
+<div id="Content" style="text-align:center; visibility:hidden">
+    <h2 style="padding-bottom: 1em">Tax Estimate Summary</h2>
+    <table class="container table table-hover">
+        <tbody>
+            <tr>
+                <td data-toggle="tooltip4" title="
+                            Line 127 – Capital gains. The is the capital gain or loss from selling or transferring capital property.">
+                    <h3>
+                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-127-capital-gains.html">
+                            Capital Gains:
+                        </a>
+                        <span id="cptTax" style="color:black">$0.00 </span>
+                    </h3>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script type="text/javascript" language="JavaScript">
         $(document).ready(function () {
             $.ajax({
                 type: "POST",
                 url: "/home/portfolio",
                 success: function (response) {
-                    if (response.length > 0) { $('#data').html(response)}
+                    if (response.length > 0) { $('#data').html(response) }
                 }
             });
+
+            // When estimate is clicked, change the visibility of it to hidden, 
+            // and run an ajax request to calculate the capital gains
+            $('#Estimate').on('click', function () {
+                document.getElementById("Estimate").style.display = "none";      // Set the button to invisible
+                document.getElementById("Content").style.visibility = "visible";       // Set the content to visible
+                $.ajax({
+                    type: "GET",
+                    url: "/home/capitalTax",
+                    success: function (response) {
+                        if (response.length > 0) { $('#cptTax').html("$"+response) }
+                    }
+                });
+            });
+            $('[data-toggle="tooltip4"]').tooltip();
+
         });
 
         document.getElementById("Portfolio").style.color = "#73C4FC";
     </script>
+}
+<style>
+    .pageCenter {
+        padding-top: 3%;
+        left: 0;
+        text-align: center;
     }
+</style>

@@ -113,7 +113,6 @@
 
         });
 
-
         /**
          *  When the user clicks the analyze button, this method fires
          * 
@@ -151,37 +150,78 @@
             // ROE, P/E EPS D/E Current Ratio
             var htmlContent = htmlContent + "<tr>";      // Indicate a table row
 
+            var roe, pe, eps, de, currRatio;
+
+            if (stockName === "SNC") {
+                roe = -29.67; pe = -4.19; eps = 0.59; de = 100.47; currRatio = -3.11;
+            }
+
+            else if (stockName === "FB") {
+                roe = 26.66;
+                pe = 31.76;
+                eps = 6.26;
+                de = 0.66;
+                currRatio = 5.76;
+            }
+
+            else if (stockName === "MSFT") {
+                roe = 27.01;
+                pe = 28.12;
+                eps = 5.31;
+                de = 0.72;
+                currRatio = 2.85;
+
+            }
+
+            else if (stockName === "AAPL") {
+                roe = 55.92;
+                pe = 22.22;
+                eps = 3.03;
+                de = 119.4;
+                currRatio = 1.54;
+
+            }
+
+            else if (stockName === "Industry Average") {
+                roe = 22.9;
+                pe = 21.2;
+                eps = 0.36;
+                de = 118.8;
+                currRatio = 1.2;
+
+            }
+
             // ROE
             htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip\" title=\" Return on equity measures how effectively management is using a company’s assets to create profits. \">"
                 + "ROE" + '</th>'          // Add the ratio
-            htmlContent = htmlContent + "<td>" + 0.0724 + "</td>"                     // hardcode the value
-            htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+            htmlContent = htmlContent + "<td>" + roe + "</td>"                     // hardcode the value
+            htmlContent = htmlContent + "<td>" + healthString(stockHealthFinder("ROE",roe)) + '</tr>'       // Hardcode the status 
 
             
             // P/E
             htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip2\" title=\"Price-to-earnings ratios compares and measures its current share price relative to its earnings per-share.\" >"
                 + "P/E" + '</th>'          // Add the ratio
-            htmlContent = htmlContent + '<td>' + 24.37 + '</td>'                       // hardcode the value
-            htmlContent = htmlContent + '<td>' + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+            htmlContent = htmlContent + '<td>' + pe + '</td>'                       // hardcode the value
+            htmlContent = htmlContent + '<td>' + healthString(stockHealthFinder("PE",pe))+ '</tr>'       // Hardcode the status 
 
 
             // EPS
             htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip3\" title=\"Earnings-per-share is a measure of a company’s profitability. The higher a company’s EPS, the more profitable it is considered.\" >"
                 + "EPS" + '</th>'          // Add the ratio
-            htmlContent = htmlContent + "<td>" + 0.59 + "</td>"                        // hardcode the value
-            htmlContent = htmlContent + "<td>" + "<span class='text-success'> Healthy </span>" + '</tr>'       // Hardcode the status 
+            htmlContent = htmlContent + "<td>" + eps + "</td>"                        // hardcode the value
+            htmlContent = htmlContent + "<td>" + healthString(stockHealthFinder("EPS",eps)) + '</tr>'       // Hardcode the status 
 
             // D/E
             htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip4\" title=\"Debt-to-Equity ratio is used to evaluate a company’s financial leverage. A higher number indicates a high reliance on debt.\" >"
                 + "D/E" + '</th>'          // Add the ratio
-            htmlContent = htmlContent + "<td>" + 27.44 + "</td>"                       // hardcode the value
-            htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
+            htmlContent = htmlContent + "<td>" + de + "</td>"                       // hardcode the value
+            htmlContent = htmlContent + "<td>" + healthString(stockHealthFinder("DE",de))+ '</tr>'       // Hardcode the status 
 
             // Current Ratio
             htmlContent = htmlContent + "<th scope=\"row\" data-toggle=\"tooltip5\" title=\"Current ratio measures a company’s ability to pay short-term obligations, a higher number indicates more liquidity.\" >"
-                + "ROE" + '</th>'          // Add the ratio
-            htmlContent = htmlContent + "<td>" + 0.83 + "</td>"                        // hardcode the value  
-            htmlContent = htmlContent + "<td>" + "<span class='text-danger'> Unhealthy </span>" + '</tr>'       // Hardcode the status 
+                + "Current Ratio" + '</th>'          // Add the ratio
+            htmlContent = htmlContent + "<td>" + currRatio + "</td>"                        // hardcode the value  
+            htmlContent = htmlContent + "<td>" + healthString(stockHealthFinder("CR",currRatio)) + '</tr>'       // Hardcode the status 
             
             $('#tableContent').html(htmlContent);   // Update the table accordingly
 
@@ -191,6 +231,42 @@
             $('[data-toggle="tooltip3"]').tooltip();
             $('[data-toggle="tooltip4"]').tooltip();
             $('[data-toggle="tooltip5"]').tooltip();
+
+        }
+
+        // Simply returns an http string for the health status its passed in
+        function healthString(healthString) {
+            if (healthString === "Unhealthy"){
+                return "<span class='text-danger'> Unhealthy </span>";
+            }
+            else if (healthString === "Healthy") {
+                return "<span class='text-success'> Healthy </span>";
+            }
+        }
+
+        function stockHealthFinder(ratioName, ratioValue) {
+            if (ratioName === "ROE")
+                {
+                if (ratioValue < 22.9) return "Unhealthy";
+                else return "Healthy";
+            }
+            else if (ratioName === "PE"){
+                if (ratioValue < 21.2) return "Unhealthy";
+                else return "Healthy";
+            }
+            else if (ratioName === "EPS"){
+                if (ratioValue < 0.36) return "Unhealthy";
+                else return "Healthy";
+            }
+                // Logic is backwards for DE, if its greater its worse
+            else if (ratioName === "DE"){
+                if (ratioValue > 118.8) return "Unhealthy";
+                else return "Healthy";
+            }
+            else if (ratioName === "CR"){
+                if (ratioValue < 1.2) return "Unhealthy";
+                else return "Healthy";
+            }
 
         }
     </script>

@@ -49,11 +49,6 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
-        public IActionResult Taxes()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ActionName("Portfolio")]
         public IActionResult Portfolio(Object input)
@@ -493,6 +488,17 @@ namespace Profit_Intel.Controllers
             {
                 sb.Append(line+"\n");
             }
+            reader.Close();
+            return this.Content(sb.ToString());
+        }
+
+        [HttpGet]
+        public IActionResult capitalTax()
+        {
+            StringBuilder sb = new StringBuilder();
+            StreamReader reader = System.IO.File.OpenText("Data\\stockGainInfo.txt");
+            string line = reader.ReadLine();
+            sb.Append(line);
             reader.Close();
             return this.Content(sb.ToString());
         }
