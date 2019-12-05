@@ -1,80 +1,80 @@
 ﻿@{
     ViewData["Title"] = "Your Dashboard";
 }
-<h1 style="padding-bottom:1em; text-align:center">@ViewData["Title"]</h1>
+<div id="contentState">
+    <h1 style="padding-bottom:1em; text-align:center">@ViewData["Title"]</h1>
 
-<p id="data"></p>
--<form>
-    Start Date: <input type="date" id="start" name="start">
-    End Date:  <input type="date" id="end" name="end">
-    <input id="submitted" type="submit" value="Update">
-</form>
+    <p id="data"></p>
+
+        Start Date: <input type="date" id="start" name="start">
+        End Date:  <input type="date" id="end" name="end">
+        <button id="submitted">Submit </button>
 
 
-<form action="/Home/Update">
-    <input type="submit" value="Reset">
-</form>
+    <form action="/Home/Update">
+        <input type="submit" value="Reset">
+    </form>
 
-<div id="date"></div>
+    <div id="date"></div>
 
-<br />
-<a href="~/images/report.pdf" download="StockInformationReportDec52019"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
+    <br />
+    <a href="~/images/report.pdf" download="StockInformationReportDec52019"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
 
-<div class="pageCenter">
-    <button id="Estimate" class=" btn btn-success btn-lg">
-        Estimate Tax Impact
-    </button>
+    <div class="pageCenter">
+        <button id="Estimate" class=" btn btn-success btn-lg">
+            Estimate Tax Impact
+        </button>
+    </div>
+
+    <div id="Content" style="text-align:center; visibility:hidden">
+        <h2 style="padding-bottom: 1em">Tax Estimate Summary</h2>
+        <table class="container table table-hover">
+            <tbody>
+                <tr>
+                    <td data-toggle="tooltip4" title="
+                                Line 127 – Capital gains. The is the capital gain or loss from selling or transferring capital property.">
+                        <h3>
+                            <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-127-capital-gains.html">
+                                Capital Gains:
+                            </a>
+                            <span id="cptTax" style="color:black">$0.00 </span>
+                        </h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-toggle="tooltip2" title="Line 121 – Foreign interest and dividends.
+                                This is the amount of foreign interest and dividend income received.">
+                        <h3>
+                            <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income/line-121-foreign-interest-dividends.html">
+                                Foreign interest and dividends: <span style="color:black">$0.00 </span>
+                        </h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-toggle="tooltip3" title="Line 121 – Interest and other investment income.
+                                This is the interest and other investment income received.">
+                        <h3>
+                            <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income.html">
+                                Interest and other investment income: <span style="color:black">$0.00 </span>
+                            </a>
+                        </h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-toggle="tooltip4" title="Line 120 – Taxable amount of dividends (eligible and other than eligible) from taxable Canadian corporations. This is the taxable amount of dividends received from a taxable Canadian corporation. ">
+                        <h3>
+                            <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-120-taxable-amount-dividends-eligible-other-than-eligible-taxable-canadian-corporations.html">
+                                Taxable Dividends:
+                            </a><span style="color:black">$0.00 </span>
+                        </h3>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="vis"></div>
 </div>
-
-<div id="Content" style="text-align:center; visibility:hidden">
-    <h2 style="padding-bottom: 1em">Tax Estimate Summary</h2>
-    <table class="container table table-hover">
-        <tbody>
-            <tr>
-                <td data-toggle="tooltip4" title="
-                            Line 127 – Capital gains. The is the capital gain or loss from selling or transferring capital property.">
-                    <h3>
-                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-127-capital-gains.html">
-                            Capital Gains:
-                        </a>
-                        <span id="cptTax" style="color:black">$0.00 </span>
-                    </h3>
-                </td>
-            </tr>
-            <tr>
-                <td data-toggle="tooltip2" title="Line 121 – Foreign interest and dividends.
-                            This is the amount of foreign interest and dividend income received.">
-                    <h3>
-                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income/line-121-foreign-interest-dividends.html">
-                            Foreign interest and dividends: <span style="color:black">$0.00 </span>
-                    </h3>
-                </td>
-            </tr>
-            <tr>
-                <td data-toggle="tooltip3" title="Line 121 – Interest and other investment income.
-                            This is the interest and other investment income received.">
-                    <h3>
-                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income.html">
-                            Interest and other investment income: <span style="color:black">$0.00 </span>
-                        </a>
-                    </h3>
-                </td>
-            </tr>
-            <tr>
-                <td data-toggle="tooltip4" title="Line 120 – Taxable amount of dividends (eligible and other than eligible) from taxable Canadian corporations. This is the taxable amount of dividends received from a taxable Canadian corporation. ">
-                    <h3>
-                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-120-taxable-amount-dividends-eligible-other-than-eligible-taxable-canadian-corporations.html">
-                            Taxable Dividends:
-                        </a><span style="color:black">$0.00 </span>
-                    </h3>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div id="vis"></div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" language="JavaScript">
@@ -86,6 +86,29 @@
                     if (response.length > 0) { $('#data').html(response) }
                 }
             });
+
+            // When the date is submitted
+            
+            $("#submitted").on("click", function (e) {
+                var startString = document.getElementById('start').value;
+                var endString = document.getElementById('end').value;
+                if (!(startString === null) && !(endString === null))
+                    {
+                    $.ajax({
+                        type: "POST",
+                        url: "/home/Update",
+                        data: startString + " " + endString,
+                            processData: false,  // tell jQuery not to process the data
+                        success: function (response) {
+                            if (response.length > 0) { $('#contentState').html(response) }
+                        }
+                    });
+                }
+                else { alert("Please look over your date segment! There was an error in the input format!")}
+
+            });
+            
+
 
             // When estimate is clicked, change the visibility of it to hidden,
             // and run an ajax request to calculate the capital gains
@@ -109,9 +132,9 @@
         document.getElementById("Portfolio").style.color = "#73C4FC";
 
 
-
+        /* Run the visualization from D3 library
         run();
-
+        
         function run() {
             var svg = d3.select("#vis")
                 .append("svg")
@@ -147,6 +170,7 @@
 
             return svg.node();
         }
+        */
     </script>
 }
 <style>

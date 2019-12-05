@@ -49,21 +49,22 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Update()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ActionName("Update")]
-        public IActionResult Update(Object data)
+        public IActionResult Update()
         {
-            //If update pressed with start and end date values entered, set them
-            string start = data.ToString();
-            //string end = date.end;
+            StreamReader startRead = new StreamReader(Request.Body);
 
-            start = "26-Jan-2019";
+            string start = startRead.ReadLine();
+
+            string[] stringArr = start.Split(null);         // Split by newlines
+
+            start = stringArr[0];
+            String end = stringArr[1];
+
+            //If update pressed with start and end date values entered, set them
+
+            System.Diagnostics.Debug.WriteLine("FAIL FAIL FAIL \n \n \n \n \n \n FART"+start);
 
             double portfolioVal = 0.0;
             double capitalGains = 0.0;
@@ -383,6 +384,7 @@ namespace Profit_Intel.Controllers
             return this.Content(sb.ToString());
         }
 
+
         [HttpPost]
         [ActionName("Portfolio")]
         public IActionResult Portfolio(Object input)
@@ -392,7 +394,7 @@ namespace Profit_Intel.Controllers
             ArrayList stockGains = new ArrayList();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("<table class='table'><tr>");
+            sb.Append("<table class='table table-hover'><tr>");
 
             //Directory containing saved stock file
             string currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockList.txt";
@@ -573,10 +575,10 @@ namespace Profit_Intel.Controllers
             sb.Append("</table>");
 
             portfolioVal = Math.Round(portfolioVal, 2);
-            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+            sb.Append(" <h3 style='padding-bottom: 2.5em'> Portfolio Value: $" + portfolioVal + " (USD)</h3>");
 
             //Profit/loss table
-            sb.Append("<table class='table'><tr>");
+            sb.Append("<table class='table table-hover'><tr>");
             //Table header: Symbol and then a header for each category of info
             {
                 sb.Append("<tr>");
@@ -802,6 +804,7 @@ namespace Profit_Intel.Controllers
         public IActionResult Contact(Object input)
         {
             StringBuilder sb = new StringBuilder();
+            sb.Append("Hello World!");
             return this.Content(sb.ToString());
         }
 
