@@ -1,19 +1,18 @@
 ﻿@{
-    ViewData["Title"] = "Portfolio";
+    ViewData["Title"] = "Your Dashboard";
 }
-<h2><b>@ViewData["Title"]</b></h2>
+<h1 style="padding-bottom:1em; text-align:center">@ViewData["Title"]</h1>
 
 <p id="data"></p>
-
-<form>
-  Start Date: <input type="date" id="start" name="start">
-  End Date:  <input type="date" id="end" name="end">
-  <input id="submitted" type="submit" value="Update">
+-<form>
+    Start Date: <input type="date" id="start" name="start">
+    End Date:  <input type="date" id="end" name="end">
+    <input id="submitted" type="submit" value="Update">
 </form>
 
 
 <form action="/Home/Update">
-  <input type="submit" value="Reset">
+    <input type="submit" value="Reset">
 </form>
 
 <div id="date"></div>
@@ -23,7 +22,7 @@
 
 <div class="pageCenter">
     <button id="Estimate" class=" btn btn-success btn-lg">
-        Estimate Capital Gains Impact
+        Estimate Tax Impact
     </button>
 </div>
 
@@ -42,12 +41,42 @@
                     </h3>
                 </td>
             </tr>
+            <tr>
+                <td data-toggle="tooltip2" title="Line 121 – Foreign interest and dividends.
+                            This is the amount of foreign interest and dividend income received.">
+                    <h3>
+                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income/line-121-foreign-interest-dividends.html">
+                            Foreign interest and dividends: <span style="color:black">$0.00 </span>
+                    </h3>
+                </td>
+            </tr>
+            <tr>
+                <td data-toggle="tooltip3" title="Line 121 – Interest and other investment income.
+                            This is the interest and other investment income received.">
+                    <h3>
+                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-121-interest-other-investment-income.html">
+                            Interest and other investment income: <span style="color:black">$0.00 </span>
+                        </a>
+                    </h3>
+                </td>
+            </tr>
+            <tr>
+                <td data-toggle="tooltip4" title="Line 120 – Taxable amount of dividends (eligible and other than eligible) from taxable Canadian corporations. This is the taxable amount of dividends received from a taxable Canadian corporation. ">
+                    <h3>
+                        <a class="text-info" href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/personal-income/line-120-taxable-amount-dividends-eligible-other-than-eligible-taxable-canadian-corporations.html">
+                            Taxable Dividends:
+                        </a><span style="color:black">$0.00 </span>
+                    </h3>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>
 
+<div id="vis"></div>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" language="JavaScript">
         $(document).ready(function () {
             $.ajax({
@@ -58,7 +87,7 @@
                 }
             });
 
-            // When estimate is clicked, change the visibility of it to hidden, 
+            // When estimate is clicked, change the visibility of it to hidden,
             // and run an ajax request to calculate the capital gains
             $('#Estimate').on('click', function () {
                 document.getElementById("Estimate").style.display = "none";      // Set the button to invisible
@@ -67,30 +96,57 @@
                     type: "GET",
                     url: "/home/capitalTax",
                     success: function (response) {
-                        if (response.length > 0) { $('#cptTax').html("$"+response) }
+                        if (response.length > 0) { $('#cptTax').html("$" + response) }
                     }
                 });
             });
+            $('[data-toggle="tooltip1"]').tooltip();
+            $('[data-toggle="tooltip2"]').tooltip();
+            $('[data-toggle="tooltip3"]').tooltip();
             $('[data-toggle="tooltip4"]').tooltip();
 
         });
-
-            $('#submitted').on("click", function () {
-
-            var startDate = document.getElementById("start").value
-            var endDate = document.getElementById("end").value
-            $.ajax({
-            type: "POST",
-                url: "/home/Update",
-                data: startDate+" "+endDate,
-            success: function (response) {
-                if (response.length > 0) { $('#okay').html(response)}
-            }
-        });
-
-        })
-
         document.getElementById("Portfolio").style.color = "#73C4FC";
+
+
+
+        run();
+
+        function run() {
+            var svg = d3.select("#vis")
+                .append("svg")
+                .append("g")
+
+            svg.append("g")
+                .attr("stroke", "white")
+                .selectAll("path")
+                .data(arcs)     // we must change this to what we want
+                .join("path")
+                .attr("fill", d => color(d.data.name))
+                .attr("d", arc)
+                .append("title")
+                .text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);
+
+            svg.append("g")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", 12)
+                .attr("text-anchor", "middle")
+                .selectAll("text")
+                .data(arcs)
+                .join("text")
+                .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+                .call(text => text.append("tspan")
+                    .attr("y", "-0.4em")
+                    .attr("font-weight", "bold")
+                    .text(d => d.data.name))
+                .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
+                    .attr("x", 0)
+                    .attr("y", "0.7em")
+                    .attr("fill-opacity", 0.7)
+                    .text(d => d.data.value.toLocaleString()));
+
+            return svg.node();
+        }
     </script>
 }
 <style>

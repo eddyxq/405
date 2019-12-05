@@ -14,7 +14,7 @@
         </div>
 
     </div>
-    <h1 id="stockName" style="padding-top: 6%"></h1>
+    <h1 id="stockName" style="padding-top: 10%"></h1>
     <table class="table table-hover" style="margin-top:1em;">
         <thead>
             <tr>
@@ -236,36 +236,36 @@
 
         // Simply returns an http string for the health status its passed in
         function healthString(healthString) {
-            if (healthString === "Unhealthy"){
-                return "<span class='text-danger'> Unhealthy </span>";
+            if (healthString === "Below Industry Average"){
+                return "<span class='text-danger'> Below Industry Average </span>";
             }
-            else if (healthString === "Healthy") {
-                return "<span class='text-success'> Healthy </span>";
+            else if (healthString === "Above Industry Average") {
+                return "<span class='text-success'> Above Industry Average </span>";
             }
         }
 
         function stockHealthFinder(ratioName, ratioValue) {
             if (ratioName === "ROE")
                 {
-                if (ratioValue < 22.9) return "Unhealthy";
-                else return "Healthy";
+                if (ratioValue < 22.9) return "Below Industry Average";
+                else return "Above Industry Average";
             }
             else if (ratioName === "PE"){
-                if (ratioValue < 21.2) return "Unhealthy";
-                else return "Healthy";
+                if (ratioValue < 21.2) return "Below Industry Average";
+                else return "Above Industry Average";
             }
             else if (ratioName === "EPS"){
-                if (ratioValue < 0.36) return "Unhealthy";
-                else return "Healthy";
+                if (ratioValue < 0.36) return "Below Industry Average";
+                else return "Above Industry Average";
             }
                 // Logic is backwards for DE, if its greater its worse
             else if (ratioName === "DE"){
-                if (ratioValue > 118.8) return "Unhealthy";
-                else return "Healthy";
+                if (ratioValue > 118.8) return "Below Industry Average";
+                else return "Above Industry Average";
             }
             else if (ratioName === "CR"){
-                if (ratioValue < 1.2) return "Unhealthy";
-                else return "Healthy";
+                if (ratioValue < 1.2) return "Below Industry Average";
+                else return "Above Industry Average";
             }
 
         }
