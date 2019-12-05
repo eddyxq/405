@@ -53,6 +53,7 @@ namespace Profit_Intel.Controllers
         [ActionName("Update")]
         public IActionResult Update()
         {
+            Boolean inRange = false;
             StreamReader startRead = new StreamReader(Request.Body);
 
             string start = startRead.ReadLine();
@@ -60,9 +61,113 @@ namespace Profit_Intel.Controllers
             string[] stringArr = start.Split(null);         // Split by newlines
 
             start = stringArr[0];
+            string[] date = start.Split("-"); //Split by - characters to reformat start date value
+
+            string monthSwitch = date[1];
+
+            //Matching the format of the parsed file dates
+            switch (monthSwitch)
+            {
+                case "01":
+                    date[1] = "Jan";
+                    break;
+                case "02":
+                    date[1] = "Feb";
+                    break;
+                case "03":
+                    date[1] = "Mar";
+                    break;
+                case "04":
+                    date[1] = "Apr";
+                    break;
+                case "05":
+                    date[1] = "May";
+                    break;
+                case "06":
+                    date[1] = "Jun";
+                    break;
+                case "07":
+                    date[1] = "Jul";
+                    break;
+                case "08":
+                    date[1] = "Aug";
+                    break;
+                case "09":
+                    date[1] = "Sep";
+                    break;
+                case "10":
+                    date[1] = "Oct";
+                    break;
+                case "11":
+                    date[1] = "Nov";
+                    break;
+                case "12":
+                    date[1] = "Dec";
+                    break;
+                    //Default case essentially means they didn't choose a month
+                default:
+                    date[1] = "Nil";
+                    break;
+            }
+
+            start = date[2] + "-" + date[1] + "-" + date[0];
+
+            //Split by / to get the month and convert it appropriately
             String end = stringArr[1];
 
+            date = end.Split("-"); //Split by - characters to reformat end date value
+
+            monthSwitch = date[1];
+
+            //Matching the format of the parsed file dates
+            switch (monthSwitch)
+            {
+                case "01":
+                    date[1] = "Jan";
+                    break;
+                case "02":
+                    date[1] = "Feb";
+                    break;
+                case "03":
+                    date[1] = "Mar";
+                    break;
+                case "04":
+                    date[1] = "Apr";
+                    break;
+                case "05":
+                    date[1] = "May";
+                    break;
+                case "06":
+                    date[1] = "Jun";
+                    break;
+                case "07":
+                    date[1] = "Jul";
+                    break;
+                case "08":
+                    date[1] = "Aug";
+                    break;
+                case "09":
+                    date[1] = "Sep";
+                    break;
+                case "10":
+                    date[1] = "Oct";
+                    break;
+                case "11":
+                    date[1] = "Nov";
+                    break;
+                case "12":
+                    date[1] = "Dec";
+                    break;
+                //Default case essentially means they didn't choose a month
+                default:
+                    date[1] = "Nil";
+                    break;
+            }
+
+            end = date[2] + "-" + date[1] + "-" + date[0];
+
             //If update pressed with start and end date values entered, set them
+            //start = "26-Jan-2019";
 
             System.Diagnostics.Debug.WriteLine("FAIL FAIL FAIL \n \n \n \n \n \n FART"+start);
 
@@ -71,7 +176,7 @@ namespace Profit_Intel.Controllers
             ArrayList stockGains = new ArrayList();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(start + "<table class='table'><tr>");
+            sb.Append("<h2> From " + start + " To " + end + " </h2> <table class='table'><tr>");
 
             //Directory containing saved stock file
             string currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockList.txt";
@@ -147,55 +252,66 @@ namespace Profit_Intel.Controllers
                 //Calculating quantity of this stock by iterating through stockInfo
                 for (int k = 0; k < stockInfo.Count(); k++)
                 {
-                    //Check if the entry is within the start date
-                    if (stockInfo[k].Equals(start))
+                    //k set to limit once the end date has been encountered
+                    //Only continue and process transactions if this is not the case
+                    if (stockInfo[k].Equals(end))
                     {
+                        k = stockInfo.Count();
+                    }
+
+                    //Check if the entry is the start date or within the date range
+                    else if (stockInfo[k].Equals(start) || inRange)
+                    {
+
+                        //Set flag initially after encountering start date
+                        inRange = true;
+                        
                         //Checking if an entry matches this stock symbol
                         if (stockInfo[k + 1].Equals(symbols[i]))
-                        {
-                            //If an entry is a BUY
-                            if (stockInfo[k + 2].Equals("BUY"))
                             {
-                                try
+                                //If an entry is a BUY
+                                if (stockInfo[k + 2].Equals("BUY"))
                                 {
-                                    double amount = System.Convert.ToDouble(stockInfo[k + 3]);
-                                    double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
-                                    double cost = amount * transactionPrice;
-                                    totalCost += cost;
-                                    quantity += amount;
+                                    try
+                                    {
+                                        double amount = System.Convert.ToDouble(stockInfo[k + 3]);
+                                        double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
+                                        double cost = amount * transactionPrice;
+                                        totalCost += cost;
+                                        quantity += amount;
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        Console.WriteLine("Input string is not a sequence of digits.");
+                                    }
+                                    catch (OverflowException)
+                                    {
+                                        Console.WriteLine("The number cannot fit in a double.");
+                                    }
                                 }
-                                catch (FormatException)
-                                {
-                                    Console.WriteLine("Input string is not a sequence of digits.");
-                                }
-                                catch (OverflowException)
-                                {
-                                    Console.WriteLine("The number cannot fit in a double.");
-                                }
-                            }
 
-                            //If an entry is a SELL
-                            if (stockInfo[k + 2].Equals("SELL"))
-                            {
-                                try
+                                //If an entry is a SELL
+                                if (stockInfo[k + 2].Equals("SELL"))
                                 {
-                                    double amount = System.Convert.ToDouble(stockInfo[k + 3]);
-                                    double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
-                                    double cost = amount * transactionPrice;
-                                    totalCost -= cost;
-                                    quantity -= amount;
-                                }
-                                catch (FormatException)
-                                {
-                                    Console.WriteLine("Input string is not a sequence of digits.");
-                                }
-                                catch (OverflowException)
-                                {
-                                    Console.WriteLine("The number cannot fit in a double.");
+                                    try
+                                    {
+                                        double amount = System.Convert.ToDouble(stockInfo[k + 3]);
+                                        double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
+                                        double cost = amount * transactionPrice;
+                                        totalCost -= cost;
+                                        quantity -= amount;
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        Console.WriteLine("Input string is not a sequence of digits.");
+                                    }
+                                    catch (OverflowException)
+                                    {
+                                        Console.WriteLine("The number cannot fit in a double.");
+                                    }
                                 }
                             }
                         }
-                    }
                 }
 
                 //Checking if user owns any of this stock (Eliminate it from portolio if Quantity = 0)
@@ -256,7 +372,10 @@ namespace Profit_Intel.Controllers
             sb.Append("</table>  <br />");
 
             portfolioVal = Math.Round(portfolioVal, 2);
-            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (CAD)</h2>");
+
+            //Reset value
+            inRange = false;
 
             //Profit/loss table
             sb.Append("<table class='table'><tr>");
@@ -284,9 +403,23 @@ namespace Profit_Intel.Controllers
                 //Calculating quantity of this stock by iterating through stockInfo
                 for (int k = 0; k < stockInfo.Count(); k++)
                 {
-                    //Checking if an entry matches this stock symbol
-                    if (stockInfo[k].Equals(symbols[i]))
+                    //k set to limit once the end date has been encountered
+                    //Only continue and process transactions if this is not the case
+                    if (stockInfo[k].Equals(end))
                     {
+                        k = stockInfo.Count();
+                    }
+
+                    //Check if the entry is the start date or within the date range
+                    else if (stockInfo[k].Equals(start) || inRange)
+                    {
+
+                        //Set flag initially after encountering start date
+                        inRange = true;
+
+                        //Checking if an entry matches this stock symbol
+                        if (stockInfo[k].Equals(symbols[i]))
+                        {
                         //If an entry is a BUY
                         if (stockInfo[k + 1].Equals("BUY"))
                         {
@@ -308,24 +441,25 @@ namespace Profit_Intel.Controllers
                             }
                         }
 
-                        //If an entry is a SELL
-                        if (stockInfo[k + 1].Equals("SELL"))
-                        {
-                            try
+                            //If an entry is a SELL
+                            if (stockInfo[k + 1].Equals("SELL"))
                             {
-                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
-                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
-                                double cost = amount * transactionPrice;
-                                totalCost -= cost;
-                                quantity -= amount;
-                            }
-                            catch (FormatException)
-                            {
-                                Console.WriteLine("Input string is not a sequence of digits.");
-                            }
-                            catch (OverflowException)
-                            {
-                                Console.WriteLine("The number cannot fit in a double.");
+                                try
+                                {
+                                    double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                    double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                    double cost = amount * transactionPrice;
+                                    totalCost -= cost;
+                                    quantity -= amount;
+                                }
+                                catch (FormatException)
+                                {
+                                    Console.WriteLine("Input string is not a sequence of digits.");
+                                }
+                                catch (OverflowException)
+                                {
+                                    Console.WriteLine("The number cannot fit in a double.");
+                                }
                             }
                         }
                     }
@@ -376,8 +510,7 @@ namespace Profit_Intel.Controllers
             }
 
             sb.Append("</table>  <br />");
-            sb.Append(start);
-            ///sb.Append(date.end);
+       
             //Saving capital gains for tax calculation
             stockGains.Add(capitalGains.ToString());
             DataSaveWrite.WriteDataToFile(stockGains, "stockGainInfo");
@@ -575,7 +708,7 @@ namespace Profit_Intel.Controllers
             sb.Append("</table>");
 
             portfolioVal = Math.Round(portfolioVal, 2);
-            sb.Append(" <h3 style='padding-bottom: 2.5em'> Portfolio Value: $" + portfolioVal + " (USD)</h3>");
+            sb.Append(" <h3 style='padding-bottom: 2.5em'> Portfolio Value: $" + portfolioVal + " (CAD)</h3>");
 
             //Profit/loss table
             sb.Append("<table class='table table-hover'><tr>");
@@ -804,7 +937,6 @@ namespace Profit_Intel.Controllers
         public IActionResult Contact(Object input)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Hello World!");
             return this.Content(sb.ToString());
         }
 
