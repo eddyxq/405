@@ -5,6 +5,22 @@
 
 <p id="data"></p>
 
+<form>
+  Start Date: <input type="date" id="start" name="start">
+  End Date:  <input type="date" id="end" name="end">
+  <input id="submitted" type="submit" value="Update">
+</form>
+
+
+<form action="/Home/Update">
+  <input type="submit" value="Reset">
+</form>
+
+<div id="date"></div>
+
+<br />
+<a href="~/images/report.pdf" download="StockInformationReportDec52019"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
+
 <div class="pageCenter">
     <button id="Estimate" class=" btn btn-success btn-lg">
         Estimate Capital Gains Impact
@@ -58,6 +74,21 @@
             $('[data-toggle="tooltip4"]').tooltip();
 
         });
+
+            $('#submitted').on("click", function () {
+
+            var startDate = document.getElementById("start").value
+            var endDate = document.getElementById("end").value
+            $.ajax({
+            type: "POST",
+                url: "/home/Update",
+                data: startDate+" "+endDate,
+            success: function (response) {
+                if (response.length > 0) { $('#okay').html(response)}
+            }
+        });
+
+        })
 
         document.getElementById("Portfolio").style.color = "#73C4FC";
     </script>

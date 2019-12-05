@@ -49,6 +49,340 @@ namespace Profit_Intel.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Update()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ActionName("Update")]
+        public IActionResult Update(Object data)
+        {
+            //If update pressed with start and end date values entered, set them
+            string start = data.ToString();
+            //string end = date.end;
+
+            start = "26-Jan-2019";
+
+            double portfolioVal = 0.0;
+            double capitalGains = 0.0;
+            ArrayList stockGains = new ArrayList();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(start + "<table class='table'><tr>");
+
+            //Directory containing saved stock file
+            string currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockList.txt";
+            //Creating an array in which we store the read conent of text file containing stock symbols
+            string[] symbols;
+            var list = new List<string>();
+            var fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            symbols = list.ToArray();
+
+            //Directory containing saved stock info
+            currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockInfo.txt";
+            //Creating an array in which we store the read conent of text file containing all stock info
+            string[] stockInfo;
+            list = new List<string>();
+            fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            stockInfo = list.ToArray();
+
+            //Directory containing saved stock prices
+            currentDirectory = Directory.GetCurrentDirectory() + "/Data/stockPrices.txt";
+            //Creating an array in which we store the read conent of text file containing all stock info
+            string[] stockPrices;
+            list = new List<string>();
+            fileStream = new FileStream(currentDirectory, FileMode.Open, FileAccess.Read);
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                string line;
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    list.Add(line);
+                }
+            }
+            stockPrices = list.ToArray();
+
+            //Table header: Symbol and then a header for each category of info
+            {
+                sb.Append("<tr>");
+                sb.Append("<th>" + "Symbol" + "</th>");
+                sb.Append("<th>" + "Market Price" + "</th>");
+                sb.Append("<th>" + "Number of Shares" + "</th>");
+                sb.Append("<th>" + "Avg. Cost" + "</th>");
+                sb.Append("<th>" + "Total Cost" + "</th>");
+                sb.Append("<th>" + "Market Value" + "</th>");
+                sb.Append("</tr>");
+            }
+
+            //Traverse through each stock and calculate its info 
+            for (int i = 0; i < symbols.Count(); i++)
+            {
+                double quantity = 0.0;
+                double marketVal = 0.0;
+                double totalCost = 0.0;
+                double gainloss = 0.0;
+                double avgCost;
+
+                sb.Append("<tr>");
+
+                //Calculating quantity of this stock by iterating through stockInfo
+                for (int k = 0; k < stockInfo.Count(); k++)
+                {
+                    //Check if the entry is within the start date
+                    if (stockInfo[k].Equals(start))
+                    {
+                        //Checking if an entry matches this stock symbol
+                        if (stockInfo[k + 1].Equals(symbols[i]))
+                        {
+                            //If an entry is a BUY
+                            if (stockInfo[k + 2].Equals("BUY"))
+                            {
+                                try
+                                {
+                                    double amount = System.Convert.ToDouble(stockInfo[k + 3]);
+                                    double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
+                                    double cost = amount * transactionPrice;
+                                    totalCost += cost;
+                                    quantity += amount;
+                                }
+                                catch (FormatException)
+                                {
+                                    Console.WriteLine("Input string is not a sequence of digits.");
+                                }
+                                catch (OverflowException)
+                                {
+                                    Console.WriteLine("The number cannot fit in a double.");
+                                }
+                            }
+
+                            //If an entry is a SELL
+                            if (stockInfo[k + 2].Equals("SELL"))
+                            {
+                                try
+                                {
+                                    double amount = System.Convert.ToDouble(stockInfo[k + 3]);
+                                    double transactionPrice = System.Convert.ToDouble(stockInfo[k + 4]);
+                                    double cost = amount * transactionPrice;
+                                    totalCost -= cost;
+                                    quantity -= amount;
+                                }
+                                catch (FormatException)
+                                {
+                                    Console.WriteLine("Input string is not a sequence of digits.");
+                                }
+                                catch (OverflowException)
+                                {
+                                    Console.WriteLine("The number cannot fit in a double.");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Checking if user owns any of this stock (Eliminate it from portolio if Quantity = 0)
+                if (quantity > 0)
+                {
+                    //listing the stock symbol itself in the row
+                    sb.Append("<th>" + symbols[i] + "</th>");
+                    //Getting market price and adjusting portfolio and holding value accordingly
+                    try
+                    {
+                        double price = System.Convert.ToDouble(stockPrices[(i * 2) + 1]);
+                        marketVal = quantity * price;
+                        portfolioVal += marketVal;
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Input string is not a sequence of digits.");
+                    }
+                    catch (OverflowException)
+                    {
+                        Console.WriteLine("The number cannot fit in a double.");
+                    }
+
+                    //Average cost basis calculation
+                    avgCost = totalCost / quantity;
+
+                    //Calculate gain or loss based on market value and total cost
+                    gainloss = marketVal - totalCost;
+                    //Round values to 2 decimal places
+                    marketVal = Math.Round(marketVal, 2);
+                    quantity = Math.Round(quantity, 2);
+                    avgCost = Math.Round(avgCost, 2);
+                    totalCost = Math.Round(totalCost, 2);
+
+                    //Market price of stock
+                    sb.Append("<td>" + stockPrices[(i * 2) + 1] + "</td>");
+                    //Number of shares
+                    sb.Append("<td>" + quantity + "</td>");
+                    //Average cost
+                    sb.Append("<td>" + avgCost + "</td>");
+                    //Total cost of this stock
+                    sb.Append("<td>" + totalCost + "</td>");
+                    //Total market value of this stock
+                    sb.Append("<td>" + marketVal + "</td>");
+
+                    sb.Append("</tr>");
+                }
+
+                //If the quantity of a share is 0
+                else
+                {
+                    sb.Append("<tr>");
+                    sb.Append("</tr>");
+                }
+            }
+
+
+            sb.Append("</table>  <br />");
+
+            portfolioVal = Math.Round(portfolioVal, 2);
+            sb.Append(" <h2> Portfolio Value: $" + portfolioVal + " (USD)</h2>");
+
+            //Profit/loss table
+            sb.Append("<table class='table'><tr>");
+            //Table header: Symbol and then a header for each category of info
+            {
+                sb.Append("<tr>");
+                sb.Append("<th>" + "Symbol" + "</th>");
+                sb.Append("<th>" + "Loss/Gain" + "</th>");
+            }
+
+            //Traverse through each stock and calculate its info 
+            for (int i = 0; i < symbols.Count(); i++)
+            {
+                double quantity = 0.0;
+                double marketVal = 0.0;
+                double totalCost = 0.0;
+                double gainloss = 0.0;
+                double avgCost;
+
+                sb.Append("<tr>");
+
+                //listing the stock symbol itself in the row
+                sb.Append("<th>" + symbols[i] + "</th>");
+
+                //Calculating quantity of this stock by iterating through stockInfo
+                for (int k = 0; k < stockInfo.Count(); k++)
+                {
+                    //Checking if an entry matches this stock symbol
+                    if (stockInfo[k].Equals(symbols[i]))
+                    {
+                        //If an entry is a BUY
+                        if (stockInfo[k + 1].Equals("BUY"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost += cost;
+                                quantity += amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+
+                        //If an entry is a SELL
+                        if (stockInfo[k + 1].Equals("SELL"))
+                        {
+                            try
+                            {
+                                double amount = System.Convert.ToDouble(stockInfo[k + 2]);
+                                double transactionPrice = System.Convert.ToDouble(stockInfo[k + 3]);
+                                double cost = amount * transactionPrice;
+                                totalCost -= cost;
+                                quantity -= amount;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Input string is not a sequence of digits.");
+                            }
+                            catch (OverflowException)
+                            {
+                                Console.WriteLine("The number cannot fit in a double.");
+                            }
+                        }
+                    }
+                }
+
+                //Getting market price and adjusting portfolio and holding value accordingly
+                try
+                {
+                    double price = System.Convert.ToDouble(stockPrices[(i * 2) + 1]);
+                    marketVal = quantity * price;
+                    portfolioVal += marketVal;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Input string is not a sequence of digits.");
+                }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("The number cannot fit in a double.");
+                }
+
+                //Average cost basis calculation
+                avgCost = totalCost / quantity;
+
+                //Calculate gain or loss based on market value and total cost
+                gainloss = marketVal - totalCost;
+                //Round values to 2 decimal places
+                marketVal = Math.Round(marketVal, 2);
+                quantity = Math.Round(quantity, 2);
+                avgCost = Math.Round(avgCost, 2);
+                totalCost = Math.Round(totalCost, 2);
+                gainloss = Math.Round(gainloss, 2);
+
+                //Adding gains for tax data
+                capitalGains += gainloss;
+
+                //Number of shares
+                //Gain or loss on this stock color based on the amount
+                if (gainloss >= 0.0)
+                {
+                    sb.Append("<td> <font color=\"green\">+" + gainloss + "</font> </td>");
+                }
+                else
+                {
+                    sb.Append("<td> <font color=\"red\">" + gainloss + "</font> </td>");
+                }
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>  <br />");
+            sb.Append(start);
+            ///sb.Append(date.end);
+            //Saving capital gains for tax calculation
+            stockGains.Add(capitalGains.ToString());
+            DataSaveWrite.WriteDataToFile(stockGains, "stockGainInfo");
+            return this.Content(sb.ToString());
+        }
+
         [HttpPost]
         [ActionName("Portfolio")]
         public IActionResult Portfolio(Object input)
@@ -463,15 +797,11 @@ namespace Profit_Intel.Controllers
         public IActionResult ImportExport()
         { return View(); }
 
-        /*
-         *  This is where Eddys change was
-         */
         [HttpPost]
         [ActionName("Contact")]
         public IActionResult Contact(Object input)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("Hello World!");
             return this.Content(sb.ToString());
         }
 

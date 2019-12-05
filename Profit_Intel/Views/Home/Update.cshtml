@@ -1,0 +1,38 @@
+﻿@model Profit_Intel.Models.dateRange
+
+@{
+    ViewData["Title"] = "Portfolio";
+}
+<h2><b>@ViewData["Title"]</b></h2>
+
+<p id="data"></p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} 
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/Update",
+                success: function (response) {
+                    if (response.length > 0) { $('#data').html(response)}
+                }
+            });
+        });
+
+        document.getElementById("Update").style.color = "#73C4FC";
+    </script>
+    }
+
+<form action="/Home/Update">
+  Start Date: <input type="date" id="start" name="start">
+  End Date:  <input type="date" id="end" name="end">
+  <input type="submit" value="Update">
+</form>
+
+<form action="/Home/Portfolio">
+  <input type="submit" value="Reset">
+</form>
+
+<br />
+<a href="~/images/report.pdf" download="StockInformationReportDec52019"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
