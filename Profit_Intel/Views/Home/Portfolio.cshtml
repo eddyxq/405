@@ -5,20 +5,15 @@
     <h1 style="padding-bottom:1em; text-align:center">@ViewData["Title"]</h1>
 
     <p id="data"></p>
-
+    <div class="text-center">
         Start Date: <input type="date" id="start" name="start">
         End Date:  <input type="date" id="end" name="end">
         <button id="submitted">Submit </button>
-
-
-    <form action="/Home/Portfolio">
-        <input type="submit" value="Reset">
-    </form>
-
-    <div id="date"></div>
-
+       
     <br />
-    <a href="~/images/report.pdf" download="StockInformationReportDec52019"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
+    <br />
+    <a href="~/images/report.pdf" download="StockInformationReport.pdf"> <button class="btn btn-lg btn-dark">Generate Report</button></a>
+         </div>
 
     <div class="pageCenter">
         <button id="Estimate" class=" btn btn-success btn-lg">
@@ -131,46 +126,6 @@
         });
         document.getElementById("Portfolio").style.color = "#73C4FC";
 
-
-        /* Run the visualization from D3 library
-        run();
-        
-        function run() {
-            var svg = d3.select("#vis")
-                .append("svg")
-                .append("g")
-
-            svg.append("g")
-                .attr("stroke", "white")
-                .selectAll("path")
-                .data(arcs)     // we must change this to what we want
-                .join("path")
-                .attr("fill", d => color(d.data.name))
-                .attr("d", arc)
-                .append("title")
-                .text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);
-
-            svg.append("g")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", 12)
-                .attr("text-anchor", "middle")
-                .selectAll("text")
-                .data(arcs)
-                .join("text")
-                .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
-                .call(text => text.append("tspan")
-                    .attr("y", "-0.4em")
-                    .attr("font-weight", "bold")
-                    .text(d => d.data.name))
-                .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
-                    .attr("x", 0)
-                    .attr("y", "0.7em")
-                    .attr("fill-opacity", 0.7)
-                    .text(d => d.data.value.toLocaleString()));
-
-            return svg.node();
-        }
-        */
     </script>
 }
 <style>

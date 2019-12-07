@@ -947,7 +947,7 @@ namespace Profit_Intel.Controllers
         public IActionResult stockList()
         {
             StringBuilder sb = new StringBuilder();
-            StreamReader reader = System.IO.File.OpenText("Data\\stockList.txt");
+            StreamReader reader = System.IO.File.OpenText("Data//stockList.txt");
             string line;
             while ((line = reader.ReadLine()) != null)
             {
@@ -961,7 +961,7 @@ namespace Profit_Intel.Controllers
         public IActionResult capitalTax()
         {
             StringBuilder sb = new StringBuilder();
-            StreamReader reader = System.IO.File.OpenText("Data\\stockGainInfo.txt");
+            StreamReader reader = System.IO.File.OpenText("Data//stockGainInfo.txt");
             string line = reader.ReadLine();
             sb.Append(line);
             reader.Close();
